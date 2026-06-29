@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Labari Compare — Ghana's Financial Services Comparison</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --ink:        #0f1117;
+      --ink-soft:   #4a4f5e;
+      --ink-muted:  #8a8f9e;
+      --rule:       #e4e6ec;
+      --surface:    #f7f8fa;
+      --white:      #ffffff;
+      --accent:     #1a6b3c;
+      --accent-lt:  #eaf3ee;
+      --accent-mid: #2d9d5c;
+      --warn:       #b45309;
+      --warn-lt:    #fef3c7;
+      --tag-bg:     #f0f1f4;
+
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-body:    'Inter', system-ui, sans-serif;
+      --font-mono:    'DM Mono', 'Courier New', monospace;
+
+      --radius:  6px;
+      --radius-lg: 12px;
+      --shadow:  0 1px 3px rgba(0,0,0,.07), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      color: var(--ink);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+    /* ── Layout ── */
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── Nav ── */
+    nav {
+      border-bottom: 1px solid var(--rule);
+      background: var(--white);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .nav-logo-word {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.125rem;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+    }
+    .nav-logo-tag {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: 1px solid var(--accent);
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 4px;
+      list-style: none;
+    }
+    .nav-links button {
+      font-size: 0.875rem;
+      color: var(--ink-soft);
+      padding: 6px 12px;
+      border-radius: var(--radius);
+      transition: background 0.15s, color 0.15s;
+      font-weight: 500;
+    }
+    .nav-links button:hover { background: var(--surface); color: var(--ink); }
+    .nav-links button.active { background: var(--accent-lt); color: var(--accent); }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 72px 0 56px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      max-width: 640px;
+      margin-bottom: 20px;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--ink-soft);
+      max-width: 480px;
+      margin-bottom: 40px;
+      line-height: 1.7;
+    }
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .hero-stat-num {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--ink);
+      display: block;
+    }
+    .hero-stat-label {
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Category Cards ── */
+    .categories-section {
+      padding: 56px 0;
+    }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ink-muted);
+      margin-bottom: 24px;
+    }
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .category-card {
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+      background: var(--white);
+    }
+    .category-card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .category-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--accent-lt);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 1.25rem;
+    }
+    .category-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .category-card p {
+      font-size: 0.875rem;
+      color: var(--ink-soft);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .category-cta {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .category-cta::after { content: '→'; transition: transform 0.15s; }
+    .category-card:hover .category-cta::after { transform: translateX(4px); }
+
+    /* ── Page Header ── */
+    .page-header {
+      padding: 40px 0 32px;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 32px;
+    }
+    .page-header-back {
+      font-size: 0.8125rem;
+      color: var(--ink-muted);
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.15s;
+    }
+    .page-header-back:hover { color: var(--ink); }
+    .page-header h2 {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .page-header p {
+      font-size: 0.9375rem;
+      color: var(--ink-soft);
+    }
+
+    /* ── Filters ── */
+    .filters-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      align-items: center;
+    }
+    .filter-label {
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-right: 4px;
+    }
+    .filter-btn {
+      font-size: 0.8125rem;
+      padding: 6px 14px;
+      border-radius: 100px;
+      border: 1px solid var(--rule);
+      color: var(--ink-soft);
+      background: var(--white);
+      transition: all 0.15s;
+      font-weight: 500;
+    }
+    .filter-btn:hover { border-color: var(--ink-soft); color: var(--ink); }
+    .filter-btn.active { background: var(--ink); color: var(--white); border-color: var(--ink); }
+    .search-input {
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      padding: 7px 14px;
+      border: 1px solid var(--rule);
+      border-radius: 100px;
+      color: var(--ink);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.15s;
+      min-width: 200px;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--ink-muted); }
+
+    /* ── Data Table ── */
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-lg);
+      margin-bottom: 16px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    thead {
+      background: var(--surface);
+      border-bottom: 1px solid var(--rule);
+    }
+    th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--ink-muted);
+      white-space: nowrap;
+    }
+    th.sortable { cursor: pointer; user-select: none; }
+    th.sortable:hover { color: var(--ink); }
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--rule);
+      color: var(--ink);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--surface); }
+    .td-provider {
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .td-mono {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+    }
+    .td-muted { color: var(--ink-muted); font-size: 0.8125rem; }
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 100px;
+      background: var(--tag-bg);
+      color: var(--ink-soft);
+      white-space: nowrap;
+    }
+    .badge-green { background: var(--accent-lt); color: var(--accent); }
+    .badge-warn { background: var(--warn-lt); color: var(--warn); }
+    .verified-date {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--ink-muted);
+    }
+    .btn-cta {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      background: var(--accent);
+      color: var(--white);
+      border-radius: var(--radius);
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .btn-cta:hover { background: var(--accent-mid); }
+
+    /* ── Fintech Cards ── */
+    .fintech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .fintech-card {
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      background: var(--white);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .fintech-card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-md);
+    }
+    .fintech-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .fintech-name {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--ink);
+    }
+    .fintech-stage {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .fintech-tagline {
+      font-size: 0.875rem;
+      color: var(--ink-soft);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .fintech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .fintech-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding-top: 16px;
+      border-top: 1px solid var(--rule);
+      font-size: 0.75rem;
+    }
+    .fintech-meta-item span:first-child {
+      display: block;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.65rem;
+      margin-bottom: 2px;
+    }
+    .fintech-meta-item span:last-child {
+      font-weight: 500;
+      color: var(--ink);
+    }
+    .fintech-card-footer {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      align-items: center;
+    }
+    .btn-outline {
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+      color: var(--ink-soft);
+      transition: all 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--ink-soft); color: var(--ink); }
+
+    /* ── Empty / Loading ── */
+    .state-box {
+      text-align: center;
+      padding: 64px 24px;
+      color: var(--ink-muted);
+    }
+    .state-box-icon { font-size: 2rem; margin-bottom: 12px; }
+    .state-box p { font-size: 0.9375rem; }
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--rule);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Table meta bar ── */
+    .table-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .table-count {
+      font-size: 0.8125rem;
+      color: var(--ink-muted);
+    }
+    .table-count strong { color: var(--ink); font-weight: 600; }
+    .last-updated {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--ink-muted);
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--rule);
+      padding: 32px 0;
+      margin-top: 64px;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-logo {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      color: var(--ink);
+    }
+    .footer-note {
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      max-width: 420px;
+      line-height: 1.6;
+    }
+    .footer-link {
+      font-size: 0.75rem;
+      color: var(--accent);
+      cursor: pointer;
+    }
+    .footer-link:hover { text-decoration: underline; }
+
+    /* ── Disclaimer Banner ── */
+    .disclaimer {
+      background: var(--warn-lt);
+      border: 1px solid #fde68a;
+      border-radius: var(--radius);
+      padding: 10px 16px;
+      font-size: 0.8125rem;
+      color: var(--warn);
+      margin-bottom: 24px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .hero { padding: 48px 0 40px; }
+      .hero-stats { gap: 24px; }
+      .fintech-meta { grid-template-columns: 1fr; }
+      .table-meta { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <div class="nav-logo" onclick="showPage('home')">
+        <span class="nav-logo-word">Labari Compare</span>
+        <span class="nav-logo-tag">Ghana</span>
+      </div>
+      <ul class="nav-links">
+        <li><button onclick="showPage('home')" id="nav-home" class="active">Home</button></li>
+        <li><button onclick="showPage('banks')" id="nav-banks">Bank Accounts</button></li>
+        <li><button onclick="showPage('broadband')" id="nav-broadband">Broadband</button></li>
+        <li><button onclick="showPage('fintechs')" id="nav-fintechs">Fintechs</button></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     HOME PAGE
+═══════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+  <div class="container">
+    <section class="hero">
+      <p class="hero-eyebrow">Ghana's Financial Services Comparison</p>
+      <h1>Compare <em>honestly.</em><br>Decide confidently.</h1>
+      <p class="hero-sub">Clear, verified data on bank accounts, broadband plans, and fintechs operating in Ghana. No sponsored rankings. No hidden agendas.</p>
+      <div class="hero-stats">
+        <div>
+          <span class="hero-stat-num" id="stat-providers">—</span>
+          <span class="hero-stat-label">Providers tracked</span>
+        </div>
+        <div>
+          <span class="hero-stat-num">3</span>
+          <span class="hero-stat-label">Categories</span>
+        </div>
+        <div>
+          <span class="hero-stat-num">Free</span>
+          <span class="hero-stat-label">Always</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="categories-section">
+      <p class="section-label">Browse categories</p>
+      <div class="category-grid">
+        <div class="category-card" onclick="showPage('banks')">
+          <div class="category-icon">🏦</div>
+          <h3>Bank Accounts</h3>
+          <p>Compare monthly fees, minimum balances, ATM charges, and interest rates across Ghana's commercial banks.</p>
+          <span class="category-cta">Compare accounts</span>
+        </div>
+        <div class="category-card" onclick="showPage('broadband')">
+          <div class="category-icon">📡</div>
+          <h3>Broadband & Home Internet</h3>
+          <p>Find the fastest, most affordable home internet plan — fiber, LTE, and fixed wireless across Ghana.</p>
+          <span class="category-cta">Compare plans</span>
+        </div>
+        <div class="category-card" onclick="showPage('fintechs')">
+          <div class="category-icon">💳</div>
+          <h3>Fintechs</h3>
+          <p>Explore lending, payments, remittance, and savings fintechs serving Ghana's consumers and businesses.</p>
+          <span class="category-cta">Explore fintechs</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-logo">Labari Compare</span>
+        <p class="footer-note">Data is verified by the Labari editorial team and updated regularly. Rates and fees are indicative — confirm directly with providers before making financial decisions.</p>
+        <span class="footer-link" onclick="showPage('home')">A Labari Media product</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     BANK ACCOUNTS PAGE
+═══════════════════════════════════════════ -->
+<div id="page-banks" class="page">
+  <div class="container">
+    <div class="page-header">
+      <span class="page-header-back" onclick="showPage('home')">← Home</span>
+      <h2>Bank Accounts</h2>
+      <p>Compare account fees, charges, and features across Ghana's commercial banks.</p>
+    </div>
+
+    <div class="disclaimer">
+      ⚠️ Fees shown are indicative and subject to change. Always confirm current rates with the bank before opening an account.
+    </div>
+
+    <div class="filters-bar">
+      <span class="filter-label">Type</span>
+      <button class="filter-btn active" onclick="filterBanks('all', this)">All</button>
+      <button class="filter-btn" onclick="filterBanks('Savings', this)">Savings</button>
+      <button class="filter-btn" onclick="filterBanks('Current', this)">Current</button>
+      <button class="filter-btn" onclick="filterBanks('Business', this)">Business</button>
+      <button class="filter-btn" onclick="filterBanks('Student', this)">Student</button>
+      <input class="search-input" id="bank-search" type="text" placeholder="Search banks..." oninput="renderBanks()" />
+    </div>
+
+    <div class="table-meta">
+      <p class="table-count">Showing <strong id="bank-count">—</strong> accounts</p>
+      <span class="last-updated">Last updated: <span id="bank-updated">—</span></span>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Provider</th>
+            <th>Account</th>
+            <th>Type</th>
+            <th class="sortable" onclick="sortBanks('monthly_fee_ghs')">Monthly Fee ↕</th>
+            <th class="sortable" onclick="sortBanks('minimum_balance_ghs')">Min. Balance ↕</th>
+            <th>ATM (Own)</th>
+            <th>ATM (Other)</th>
+            <th>Mobile Banking</th>
+            <th>Interest Rate</th>
+            <th>Last Verified</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="bank-tbody">
+          <tr><td colspan="11"><div class="state-box"><div class="spinner"></div><p>Loading accounts…</p></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-logo">Labari Compare</span>
+        <p class="footer-note">Data verified by Labari editorial team. Confirm all fees directly with the bank before making decisions.</p>
+        <span class="footer-link" onclick="showPage('home')">← Back to home</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     BROADBAND PAGE
+═══════════════════════════════════════════ -->
+<div id="page-broadband" class="page">
+  <div class="container">
+    <div class="page-header">
+      <span class="page-header-back" onclick="showPage('home')">← Home</span>
+      <h2>Broadband & Home Internet</h2>
+      <p>Compare home internet plans by speed, price, and coverage across Ghana.</p>
+    </div>
+
+    <div class="disclaimer">
+      ⚠️ Speeds are advertised maximums. Actual speeds vary by location and network conditions.
+    </div>
+
+    <div class="filters-bar">
+      <span class="filter-label">Technology</span>
+      <button class="filter-btn active" onclick="filterBroadband('all', this)">All</button>
+      <button class="filter-btn" onclick="filterBroadband('Fiber', this)">Fiber</button>
+      <button class="filter-btn" onclick="filterBroadband('4G LTE Fixed Wireless', this)">4G LTE</button>
+      <button class="filter-btn" onclick="filterBroadband('5G', this)">5G</button>
+      <input class="search-input" id="broadband-search" type="text" placeholder="Search providers..." oninput="renderBroadband()" />
+    </div>
+
+    <div class="table-meta">
+      <p class="table-count">Showing <strong id="broadband-count">—</strong> plans</p>
+      <span class="last-updated">Last updated: <span id="broadband-updated">—</span></span>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Provider</th>
+            <th>Plan</th>
+            <th>Technology</th>
+            <th class="sortable" onclick="sortBroadband('download_speed_mbps')">Speed (Down) ↕</th>
+            <th>Speed (Up)</th>
+            <th class="sortable" onclick="sortBroadband('monthly_price_ghs')">Monthly Price ↕</th>
+            <th>Data</th>
+            <th>Contract</th>
+            <th>Installation</th>
+            <th>Coverage</th>
+            <th>Last Verified</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="broadband-tbody">
+          <tr><td colspan="12"><div class="state-box"><div class="spinner"></div><p>Loading plans…</p></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-logo">Labari Compare</span>
+        <p class="footer-note">Data verified by Labari editorial team. Availability depends on your location — confirm coverage with the provider.</p>
+        <span class="footer-link" onclick="showPage('home')">← Back to home</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FINTECHS PAGE
+═══════════════════════════════════════════ -->
+<div id="page-fintechs" class="page">
+  <div class="container">
+    <div class="page-header">
+      <span class="page-header-back" onclick="showPage('home')">← Home</span>
+      <h2>Fintechs in Ghana</h2>
+      <p>Lending, payments, remittance, and savings fintechs operating in Ghana.</p>
+    </div>
+
+    <div class="filters-bar">
+      <span class="filter-label">Category</span>
+      <button class="filter-btn active" onclick="filterFintechs('all', this)">All</button>
+      <button class="filter-btn" onclick="filterFintechs('Lending', this)">Lending</button>
+      <button class="filter-btn" onclick="filterFintechs('Payments', this)">Payments</button>
+      <button class="filter-btn" onclick="filterFintechs('Remittance', this)">Remittance</button>
+      <button class="filter-btn" onclick="filterFintechs('Savings', this)">Savings</button>
+      <button class="filter-btn" onclick="filterFintechs('Insurtech', this)">Insurtech</button>
+      <input class="search-input" id="fintech-search" type="text" placeholder="Search fintechs..." oninput="renderFintechs()" />
+    </div>
+
+    <div class="table-meta">
+      <p class="table-count">Showing <strong id="fintech-count">—</strong> fintechs</p>
+    </div>
+
+    <div id="fintech-grid" class="fintech-grid">
+      <div class="state-box" style="grid-column:1/-1">
+        <div class="spinner"></div>
+        <p>Loading fintechs…</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-logo">Labari Compare</span>
+        <p class="footer-note">Fintech data is updated regularly. Verify rates and terms directly with each provider.</p>
+        <span class="footer-link" onclick="showPage('home')">← Back to home</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════ -->
+<script>
+const WORKER_URL = 'https://labaricompare.joseph-kuuire.workers.dev';
+
+// ── State ──
+const state = {
+  banks: [],
+  broadband: [],
+  fintechs: [],
+  bankFilter: 'all',
+  broadbandFilter: 'all',
+  fintechFilter: 'all',
+  bankSort: { field: null, dir: 'asc' },
+  broadbandSort: { field: null, dir: 'asc' },
+};
+
+// ── Navigation ──
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+  document.getElementById(`page-${page}`).classList.add('active');
+  const navBtn = document.getElementById(`nav-${page}`);
+  if (navBtn) navBtn.classList.add('active');
+  window.scrollTo(0, 0);
+
+  if (page === 'banks' && state.banks.length === 0) fetchBanks();
+  if (page === 'broadband' && state.broadband.length === 0) fetchBroadband();
+  if (page === 'fintechs' && state.fintechs.length === 0) fetchFintechs();
+}
+
+// ── Helpers ──
+function ghs(val) {
+  if (val === null || val === undefined || val === '') return '<span class="td-muted">—</span>';
+  return `<span class="td-mono">GHS ${parseFloat(val).toFixed(2)}</span>`;
+}
+function val(v, suffix = '') {
+  if (v === null || v === undefined || v === '') return '<span class="td-muted">—</span>';
+  return `${v}${suffix}`;
+}
+function bool(v) {
+  return v ? '<span class="badge badge-green">Yes</span>' : '<span class="badge">No</span>';
+}
+function fmtDate(d) {
+  if (!d) return '<span class="td-muted">—</span>';
+  return `<span class="verified-date">${d}</span>`;
+}
+function providerName(p) {
+  if (!p) return '—';
+  if (Array.isArray(p)) return p.map(x => x.value || x).join(', ');
+  if (typeof p === 'object') return p.value || p.Name || '—';
+  return p;
+}
+function multiVal(v) {
+  if (!v || (Array.isArray(v) && v.length === 0)) return '<span class="td-muted">—</span>';
+  const arr = Array.isArray(v) ? v : [v];
+  return arr.map(x => `<span class="badge">${x.value || x}</span>`).join(' ');
+}
+function latestDate(rows, field) {
+  const dates = rows.map(r => r[field]).filter(Boolean).sort().reverse();
+  return dates[0] || null;
+}
+
+// ── Fetch ──
+async function fetchProviders() {
+  try {
+    const res = await fetch(`${WORKER_URL}/providers`);
+    const data = await res.json();
+    const count = data.count || 0;
+    document.getElementById('stat-providers').textContent = count;
+  } catch(e) {}
+}
+
+async function fetchBanks() {
+  document.getElementById('bank-tbody').innerHTML =
+    `<tr><td colspan="11"><div class="state-box"><div class="spinner"></div><p>Loading accounts…</p></div></td></tr>`;
+  try {
+    const res = await fetch(`${WORKER_URL}/bank-accounts`);
+    const data = await res.json();
+    state.banks = data.results || [];
+    const latest = latestDate(state.banks, 'last_verified');
+    document.getElementById('bank-updated').textContent = latest || 'Not yet verified';
+    renderBanks();
+  } catch(e) {
+    document.getElementById('bank-tbody').innerHTML =
+      `<tr><td colspan="11"><div class="state-box"><div class="state-box-icon">⚠️</div><p>Could not load data. Try refreshing.</p></div></td></tr>`;
+  }
+}
+
+async function fetchBroadband() {
+  document.getElementById('broadband-tbody').innerHTML =
+    `<tr><td colspan="12"><div class="state-box"><div class="spinner"></div><p>Loading plans…</p></div></td></tr>`;
+  try {
+    const res = await fetch(`${WORKER_URL}/broadband`);
+    const data = await res.json();
+    state.broadband = data.results || [];
+    const latest = latestDate(state.broadband, 'last_verified');
+    document.getElementById('broadband-updated').textContent = latest || 'Not yet verified';
+    renderBroadband();
+  } catch(e) {
+    document.getElementById('broadband-tbody').innerHTML =
+      `<tr><td colspan="12"><div class="state-box"><div class="state-box-icon">⚠️</div><p>Could not load data. Try refreshing.</p></div></td></tr>`;
+  }
+}
+
+async function fetchFintechs() {
+  document.getElementById('fintech-grid').innerHTML =
+    `<div class="state-box" style="grid-column:1/-1"><div class="spinner"></div><p>Loading fintechs…</p></div>`;
+  try {
+    const res = await fetch(`${WORKER_URL}/fintechs`);
+    const data = await res.json();
+    state.fintechs = data.results || [];
+    renderFintechs();
+  } catch(e) {
+    document.getElementById('fintech-grid').innerHTML =
+      `<div class="state-box" style="grid-column:1/-1"><div class="state-box-icon">⚠️</div><p>Could not load data. Try refreshing.</p></div>`;
+  }
+}
+
+// ── Filter & Sort: Banks ──
+let bankActiveFilter = 'all';
+function filterBanks(type, btn) {
+  bankActiveFilter = type;
+  document.querySelectorAll('#page-banks .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBanks();
+}
+function sortBanks(field) {
+  if (state.bankSort.field === field) {
+    state.bankSort.dir = state.bankSort.dir === 'asc' ? 'desc' : 'asc';
+  } else {
+    state.bankSort = { field, dir: 'asc' };
+  }
+  renderBanks();
+}
+function renderBanks() {
+  const q = (document.getElementById('bank-search')?.value || '').toLowerCase();
+  let rows = state.banks.filter(r => {
+    const name = (providerName(r.provider) + ' ' + (r.account_name || '')).toLowerCase();
+    const typeMatch = bankActiveFilter === 'all' || (r.account_type?.value || r.account_type) === bankActiveFilter;
+    return name.includes(q) && typeMatch;
+  });
+
+  if (state.bankSort.field) {
+    rows.sort((a, b) => {
+      const av = parseFloat(a[state.bankSort.field]) || 0;
+      const bv = parseFloat(b[state.bankSort.field]) || 0;
+      return state.bankSort.dir === 'asc' ? av - bv : bv - av;
+    });
+  }
+
+  document.getElementById('bank-count').textContent = rows.length;
+
+  if (rows.length === 0) {
+    document.getElementById('bank-tbody').innerHTML =
+      `<tr><td colspan="11"><div class="state-box"><div class="state-box-icon">🔍</div><p>No accounts match your filters.</p></div></td></tr>`;
+    return;
+  }
+
+  document.getElementById('bank-tbody').innerHTML = rows.map(r => {
+    const provider = providerName(r.provider);
+    const acctType = r.account_type?.value || r.account_type || '—';
+    const mobileFeeType = r.mobile_banking_fee_type?.value || r.mobile_banking_fee_type;
+    const mobileFee = mobileFeeType === 'Free'
+      ? '<span class="badge badge-green">Free</span>'
+      : mobileFeeType ? `<span class="badge">${mobileFeeType}</span>` : '<span class="td-muted">—</span>';
+
+    return `<tr>
+      <td class="td-provider">${provider}</td>
+      <td>${r.account_name || '<span class="td-muted">—</span>'}</td>
+      <td><span class="badge">${acctType}</span></td>
+      <td>${ghs(r.monthly_fee_ghs)}</td>
+      <td>${ghs(r.minimum_balance_ghs)}</td>
+      <td>${ghs(r.atm_fee_own_ghs)}</td>
+      <td>${ghs(r.atm_fee_other_ghs)}</td>
+      <td>${mobileFee}</td>
+      <td>${r.savings_interest_rate_pa ? `<span class="td-mono">${r.savings_interest_rate_pa}% p.a.</span>` : '<span class="td-muted">—</span>'}</td>
+      <td>${fmtDate(r.last_verified)}</td>
+      <td>${r.source_url ? `<a href="${r.source_url}" target="_blank"><button class="btn-cta">View →</button></a>` : ''}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Filter & Sort: Broadband ──
+let broadbandActiveFilter = 'all';
+function filterBroadband(type, btn) {
+  broadbandActiveFilter = type;
+  document.querySelectorAll('#page-broadband .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBroadband();
+}
+function sortBroadband(field) {
+  if (state.broadbandSort.field === field) {
+    state.broadbandSort.dir = state.broadbandSort.dir === 'asc' ? 'desc' : 'asc';
+  } else {
+    state.broadbandSort = { field, dir: 'asc' };
+  }
+  renderBroadband();
+}
+function renderBroadband() {
+  const q = (document.getElementById('broadband-search')?.value || '').toLowerCase();
+  let rows = state.broadband.filter(r => {
+    const name = (providerName(r.provider) + ' ' + (r.plan_name || '')).toLowerCase();
+    const tech = r.technology?.value || r.technology || '';
+    const typeMatch = broadbandActiveFilter === 'all' || tech === broadbandActiveFilter;
+    return name.includes(q) && typeMatch;
+  });
+
+  if (state.broadbandSort.field) {
+    rows.sort((a, b) => {
+      const av = parseFloat(a[state.broadbandSort.field]) || 0;
+      const bv = parseFloat(b[state.broadbandSort.field]) || 0;
+      return state.broadbandSort.dir === 'asc' ? av - bv : bv - av;
+    });
+  }
+
+  document.getElementById('broadband-count').textContent = rows.length;
+
+  if (rows.length === 0) {
+    document.getElementById('broadband-tbody').innerHTML =
+      `<tr><td colspan="12"><div class="state-box"><div class="state-box-icon">🔍</div><p>No plans match your filters.</p></div></td></tr>`;
+    return;
+  }
+
+  document.getElementById('broadband-tbody').innerHTML = rows.map(r => {
+    const provider = providerName(r.provider);
+    const tech = r.technology?.value || r.technology || '—';
+    const dataLabel = r.unlimited
+      ? '<span class="badge badge-green">Unlimited</span>'
+      : r.data_cap_gb ? `<span class="td-mono">${r.data_cap_gb} GB</span>` : '<span class="td-muted">—</span>';
+    const contract = r.contract_months === 0 || r.contract_months === '0'
+      ? '<span class="badge badge-green">No contract</span>'
+      : r.contract_months ? `<span class="badge">${r.contract_months}mo</span>` : '<span class="td-muted">—</span>';
+    const coverage = r.coverage_areas && r.coverage_areas.length > 0
+      ? r.coverage_areas.slice(0, 2).map(x => `<span class="badge">${x.value || x}</span>`).join(' ')
+      : '<span class="td-muted">—</span>';
+
+    return `<tr>
+      <td class="td-provider">${provider}</td>
+      <td>${r.plan_name || '<span class="td-muted">—</span>'}</td>
+      <td><span class="badge">${tech}</span></td>
+      <td>${r.download_speed_mbps ? `<span class="td-mono">${r.download_speed_mbps} Mbps</span>` : '<span class="td-muted">—</span>'}</td>
+      <td>${r.upload_speed_mbps ? `<span class="td-mono">${r.upload_speed_mbps} Mbps</span>` : '<span class="td-muted">—</span>'}</td>
+      <td>${ghs(r.monthly_price_ghs)}</td>
+      <td>${dataLabel}</td>
+      <td>${contract}</td>
+      <td>${ghs(r.installation_fee_ghs)}</td>
+      <td>${coverage}</td>
+      <td>${fmtDate(r.last_verified)}</td>
+      <td>${r.source_url ? `<a href="${r.source_url}" target="_blank"><button class="btn-cta">View →</button></a>` : ''}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Filter: Fintechs ──
+let fintechActiveFilter = 'all';
+function filterFintechs(type, btn) {
+  fintechActiveFilter = type;
+  document.querySelectorAll('#page-fintechs .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFintechs();
+}
+function renderFintechs() {
+  const q = (document.getElementById('fintech-search')?.value || '').toLowerCase();
+  let rows = state.fintechs.filter(r => {
+    const name = (r.company_name || providerName(r.provider) || '').toLowerCase();
+    const cats = (r.fintech_category || []).map(x => x.value || x);
+    const catMatch = fintechActiveFilter === 'all' || cats.includes(fintechActiveFilter);
+    return name.includes(q) && catMatch;
+  });
+
+  document.getElementById('fintech-count').textContent = rows.length;
+
+  if (rows.length === 0) {
+    document.getElementById('fintech-grid').innerHTML =
+      `<div class="state-box" style="grid-column:1/-1"><div class="state-box-icon">🔍</div><p>No fintechs match your filters.</p></div>`;
+    return;
+  }
+
+  document.getElementById('fintech-grid').innerHTML = rows.map(r => {
+    const name = r.company_name || providerName(r.provider) || 'Unknown';
+    const cats = (r.fintech_category || []).map(x => `<span class="badge badge-green">${x.value || x}</span>`).join(' ');
+    const channels = (r.primary_channel || []).map(x => `<span class="badge">${x.value || x}</span>`).join(' ');
+    const stage = r.funding_stage?.value || r.funding_stage || '';
+    const regulated = r.regulated;
+    const regulator = (r.regulator || []).map(x => x.value || x).join(', ');
+    const website = r.source_url || '';
+    const cta = r.lead_gen_cta || 'Learn More';
+
+    return `<div class="fintech-card">
+      <div class="fintech-card-header">
+        <div>
+          <div class="fintech-name">${name}</div>
+          ${stage ? `<div class="fintech-stage">${stage}</div>` : ''}
+        </div>
+        ${regulated ? '<span class="badge badge-green">Regulated</span>' : ''}
+      </div>
+      ${r.tagline ? `<p class="fintech-tagline">${r.tagline}</p>` : ''}
+      ${cats ? `<div class="fintech-tags">${cats}</div>` : ''}
+      <div class="fintech-meta">
+        <div class="fintech-meta-item">
+          <span>Channels</span>
+          <span>${channels || '—'}</span>
+        </div>
+        <div class="fintech-meta-item">
+          <span>Regulator</span>
+          <span>${regulator || '—'}</span>
+        </div>
+        ${r.interest_rate ? `<div class="fintech-meta-item">
+          <span>Interest Rate</span>
+          <span>${r.interest_rate}% ${r.interest_rate_period?.value || 'p.m.'}</span>
+        </div>` : ''}
+        ${r.disbursement_time ? `<div class="fintech-meta-item">
+          <span>Disbursement</span>
+          <span>${r.disbursement_time?.value || r.disbursement_time}</span>
+        </div>` : ''}
+      </div>
+      <div class="fintech-card-footer">
+        ${website ? `<a href="${website}" target="_blank"><button class="btn-cta">${cta} →</button></a>` : ''}
+        <button class="btn-outline" onclick="alert('Suggest a correction feature coming soon.')">Flag issue</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Init ──
+fetchProviders();
+</script>
+</body>
+</html>
