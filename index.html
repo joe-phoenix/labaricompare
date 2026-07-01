@@ -549,6 +549,105 @@
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; animation: none !important; }
     }
+
+    /* ── Sticky Comparison Table ── */
+    .cmp-shell {
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 16px;
+      background: var(--white);
+    }
+    .cmp-scroll { overflow-x: auto; scrollbar-width: thin; }
+    .cmp-grid {
+      display: grid;
+      min-width: 220px;
+    }
+    .cmp-corner {
+      position: sticky; left: 0; background: var(--white); z-index: 3;
+      border-bottom: 1px solid var(--rule);
+      border-right: 1px solid var(--rule);
+    }
+    .cmp-provider-head {
+      padding: 24px 18px 18px;
+      border-bottom: 1px solid var(--rule);
+      border-right: 1px solid var(--rule);
+      text-align: center;
+    }
+    .cmp-provider-head:last-child { border-right: none; }
+    .cmp-provider-name {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.0625rem;
+      margin: 0 0 4px;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+    .cmp-provider-sub {
+      font-size: 0.75rem; color: var(--ink-muted); margin: 0 0 10px;
+    }
+    .cmp-provider-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.8125rem; color: var(--accent); text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.15s ease;
+    }
+    .cmp-provider-link:hover { border-color: var(--accent); }
+
+    .cmp-section-label {
+      position: sticky; left: 0; background: var(--surface); z-index: 2;
+      padding: 14px 18px; font-family: var(--font-mono);
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em;
+      font-weight: 500; color: var(--ink-soft); display: flex;
+      align-items: center; justify-content: space-between; cursor: pointer;
+      border-right: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      user-select: none;
+    }
+    .cmp-chevron {
+      transition: transform 0.2s ease;
+      color: var(--ink-muted);
+      font-size: 0.7rem;
+    }
+    .cmp-section-label[data-open="false"] .cmp-chevron { transform: rotate(-90deg); }
+    .cmp-section-filler {
+      background: var(--surface);
+      border-bottom: 1px solid var(--rule);
+      border-right: 1px solid var(--rule);
+    }
+    .cmp-section-filler:last-child { border-right: none; }
+
+    .cmp-row-label {
+      position: sticky; left: 0; background: var(--white); z-index: 1;
+      padding: 14px 18px; font-size: 0.8125rem; color: var(--ink-soft);
+      border-right: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      display: flex; align-items: center;
+    }
+    .cmp-data {
+      padding: 14px 18px;
+      border-right: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+    }
+    .cmp-data:last-child { border-right: none; }
+
+    .cmp-cell { font-size: 0.8125rem; font-weight: 600; color: var(--ink); }
+    .cmp-cell--muted { color: var(--ink-muted); font-weight: 400; }
+
+    .cmp-nav {
+      display: flex; gap: 8px; margin-bottom: 16px;
+    }
+    .cmp-nav-btn {
+      width: 32px; height: 32px; border-radius: 999px;
+      border: 1px solid var(--rule); background: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--ink); font-size: 0.875rem;
+      transition: border-color 0.15s ease;
+    }
+    .cmp-nav-btn:hover { border-color: var(--ink); }
   </style>
 </head>
 <body>
@@ -647,42 +746,17 @@
       ⚠️ Fees shown are indicative and subject to change. Always confirm current rates with the bank before opening an account.
     </div>
 
-    <div class="filters-bar">
-      <span class="filter-label">Type</span>
-      <button class="filter-btn active" onclick="filterBanks('all', this)">All</button>
-      <button class="filter-btn" onclick="filterBanks('Savings', this)">Savings</button>
-      <button class="filter-btn" onclick="filterBanks('Current', this)">Current</button>
-      <button class="filter-btn" onclick="filterBanks('Business', this)">Business</button>
-      <button class="filter-btn" onclick="filterBanks('Student', this)">Student</button>
-      <input class="search-input" id="bank-search" type="text" placeholder="Search banks..." oninput="renderBanks()" />
+    <div class="cmp-nav">
+      <button class="cmp-nav-btn" onclick="cmpScroll('banks', -1)" aria-label="Scroll left">←</button>
+      <button class="cmp-nav-btn" onclick="cmpScroll('banks', 1)" aria-label="Scroll right">→</button>
     </div>
 
-    <div class="table-meta">
-      <p class="table-count">Showing <strong id="bank-count">—</strong> accounts</p>
-      <span class="last-updated">Last updated: <span id="bank-updated">—</span></span>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Provider</th>
-            <th>Account</th>
-            <th>Type</th>
-            <th class="sortable" onclick="sortBanks('monthly_fee_ghs')">Monthly Fee ↕</th>
-            <th class="sortable" onclick="sortBanks('minimum_balance_ghs')">Min. Balance ↕</th>
-            <th>ATM (Own)</th>
-            <th>ATM (Other)</th>
-            <th>Mobile Banking</th>
-            <th>Interest Rate</th>
-            <th>Last Verified</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="bank-tbody">
-          <tr><td colspan="11"><div class="state-box"><div class="spinner"></div><p>Loading accounts…</p></div></td></tr>
-        </tbody>
-      </table>
+    <div class="cmp-shell">
+      <div class="cmp-scroll" id="cmp-scroll-banks">
+        <div id="cmp-content-banks">
+          <div class="state-box"><div class="spinner"></div><p>Loading accounts…</p></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -712,42 +786,17 @@
       ⚠️ Speeds are advertised maximums. Actual speeds vary by location and network conditions.
     </div>
 
-    <div class="filters-bar">
-      <span class="filter-label">Technology</span>
-      <button class="filter-btn active" onclick="filterBroadband('all', this)">All</button>
-      <button class="filter-btn" onclick="filterBroadband('Fiber', this)">Fiber</button>
-      <button class="filter-btn" onclick="filterBroadband('4G LTE Fixed Wireless', this)">4G LTE</button>
-      <button class="filter-btn" onclick="filterBroadband('5G', this)">5G</button>
-      <input class="search-input" id="broadband-search" type="text" placeholder="Search providers..." oninput="renderBroadband()" />
+    <div class="cmp-nav">
+      <button class="cmp-nav-btn" onclick="cmpScroll('broadband', -1)" aria-label="Scroll left">←</button>
+      <button class="cmp-nav-btn" onclick="cmpScroll('broadband', 1)" aria-label="Scroll right">→</button>
     </div>
 
-    <div class="table-meta">
-      <p class="table-count">Showing <strong id="broadband-count">—</strong> plans</p>
-      <span class="last-updated">Last updated: <span id="broadband-updated">—</span></span>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Provider</th>
-            <th>Plan</th>
-            <th>Technology</th>
-            <th class="sortable" onclick="sortBroadband('download_speed_mbps')">Speed (Down) ↕</th>
-            <th>Speed (Up)</th>
-            <th class="sortable" onclick="sortBroadband('monthly_price_ghs')">Monthly Price ↕</th>
-            <th>Data</th>
-            <th>Contract</th>
-            <th>Installation</th>
-            <th>Coverage</th>
-            <th>Last Verified</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="broadband-tbody">
-          <tr><td colspan="12"><div class="state-box"><div class="spinner"></div><p>Loading plans…</p></div></td></tr>
-        </tbody>
-      </table>
+    <div class="cmp-shell">
+      <div class="cmp-scroll" id="cmp-scroll-broadband">
+        <div id="cmp-content-broadband">
+          <div class="state-box"><div class="spinner"></div><p>Loading plans…</p></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -773,25 +822,16 @@
       <p>Lending, payments, remittance, and savings fintechs operating in Ghana.</p>
     </div>
 
-    <div class="filters-bar">
-      <span class="filter-label">Category</span>
-      <button class="filter-btn active" onclick="filterFintechs('all', this)">All</button>
-      <button class="filter-btn" onclick="filterFintechs('Lending', this)">Lending</button>
-      <button class="filter-btn" onclick="filterFintechs('Payments', this)">Payments</button>
-      <button class="filter-btn" onclick="filterFintechs('Remittance', this)">Remittance</button>
-      <button class="filter-btn" onclick="filterFintechs('Savings', this)">Savings</button>
-      <button class="filter-btn" onclick="filterFintechs('Insurtech', this)">Insurtech</button>
-      <input class="search-input" id="fintech-search" type="text" placeholder="Search fintechs..." oninput="renderFintechs()" />
+    <div class="cmp-nav">
+      <button class="cmp-nav-btn" onclick="cmpScroll('fintechs', -1)" aria-label="Scroll left">←</button>
+      <button class="cmp-nav-btn" onclick="cmpScroll('fintechs', 1)" aria-label="Scroll right">→</button>
     </div>
 
-    <div class="table-meta">
-      <p class="table-count">Showing <strong id="fintech-count">—</strong> fintechs</p>
-    </div>
-
-    <div id="fintech-grid" class="fintech-grid">
-      <div class="state-box" style="grid-column:1/-1">
-        <div class="spinner"></div>
-        <p>Loading fintechs…</p>
+    <div class="cmp-shell">
+      <div class="cmp-scroll" id="cmp-scroll-fintechs">
+        <div id="cmp-content-fintechs">
+          <div class="state-box"><div class="spinner"></div><p>Loading fintechs…</p></div>
+        </div>
       </div>
     </div>
   </div>
@@ -813,17 +853,143 @@
 <script>
 const WORKER_URL = 'https://labaricompare.joseph-kuuire.workers.dev';
 
-// ── State ──
-const state = {
-  banks: [],
-  broadband: [],
-  fintechs: [],
-  bankFilter: 'all',
-  broadbandFilter: 'all',
-  fintechFilter: 'all',
-  bankSort: { field: null, dir: 'asc' },
-  broadbandSort: { field: null, dir: 'asc' },
+// ── Category config ──
+const CMP_CATEGORIES = {
+  banks: { route: 'banks', nameField: 'Provider', subField: 'Account Name' },
+  broadband: { route: 'broadband', nameField: 'Provider', subField: 'Plan Name' },
+  fintechs: { route: 'fintechs', nameField: 'Provider', subField: 'Product Name' },
 };
+
+// Fields not shown as comparison rows — used for header/meta instead.
+const CMP_META_FIELDS = new Set(['id', 'order', 'Website', 'Logo']);
+
+// Simple grouping so long field lists don't read as one flat wall.
+const CMP_GROUP_RULES = [
+  { id: 'general', label: 'General information', match: /fee|price|balance|plan|account/i },
+  { id: 'atm', label: 'ATM & cards', match: /atm|card/i },
+  { id: 'digital', label: 'Digital & service', match: /mobile|sms|email|internet|kyc|currenc/i },
+];
+
+const cmpState = {
+  data: {},         // category -> rows[]
+  openSections: {}, // category -> { sectionId: bool }
+};
+
+function cmpEscape(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function cmpGroupFields(fieldNames) {
+  const groups = CMP_GROUP_RULES.map(g => ({ ...g, fields: [] }));
+  const details = { id: 'details', label: 'Details', fields: [] };
+
+  fieldNames.forEach(f => {
+    const match = CMP_GROUP_RULES.find(g => g.match.test(f));
+    if (match) {
+      groups.find(g => g.id === match.id).fields.push(f);
+    } else {
+      details.fields.push(f);
+    }
+  });
+
+  const nonEmpty = groups.filter(g => g.fields.length > 0);
+  if (details.fields.length > 0) nonEmpty.push(details);
+  return nonEmpty;
+}
+
+function cmpCellHtml(value) {
+  const display = value === undefined || value === null || value === '' ? '—' : String(value);
+  const isDash = display === '—';
+  return `<span class="cmp-cell${isDash ? ' cmp-cell--muted' : ''}">${cmpEscape(display)}</span>`;
+}
+
+async function cmpLoad(categoryId) {
+  const cfg = CMP_CATEGORIES[categoryId];
+  const contentEl = document.getElementById(`cmp-content-${categoryId}`);
+  contentEl.innerHTML = `<div class="state-box"><div class="spinner"></div><p>Loading…</p></div>`;
+
+  try {
+    const res = await fetch(`${WORKER_URL}/${cfg.route}`);
+    if (!res.ok) throw new Error(`Server responded ${res.status}`);
+    const json = await res.json();
+    cmpState.data[categoryId] = json.data || [];
+    cmpRender(categoryId);
+  } catch (err) {
+    contentEl.innerHTML = `<div class="state-box"><div class="state-box-icon">⚠️</div><p>Could not load data (${cmpEscape(err.message)}). Try refreshing.</p></div>`;
+  }
+}
+
+function cmpRender(categoryId) {
+  const cfg = CMP_CATEGORIES[categoryId];
+  const contentEl = document.getElementById(`cmp-content-${categoryId}`);
+  const rows = cmpState.data[categoryId] || [];
+
+  if (rows.length === 0) {
+    contentEl.innerHTML = `<div class="state-box"><p>No entries found yet.</p></div>`;
+    return;
+  }
+
+  const fieldNames = Object.keys(rows[0]).filter(
+    f => !CMP_META_FIELDS.has(f) && f !== cfg.nameField && f !== cfg.subField
+  );
+  const sections = cmpGroupFields(fieldNames);
+
+  if (!cmpState.openSections[categoryId]) cmpState.openSections[categoryId] = {};
+  sections.forEach(s => {
+    if (!(s.id in cmpState.openSections[categoryId])) cmpState.openSections[categoryId][s.id] = true;
+  });
+
+  let html = `<div class="cmp-grid" style="grid-template-columns: 200px repeat(${rows.length}, 220px);">`;
+  html += `<div class="cmp-corner"></div>`;
+
+  rows.forEach(r => {
+    const name = r[cfg.nameField] || '—';
+    const sub = r[cfg.subField];
+    const website = r.Website;
+    html += `<div class="cmp-provider-head">
+      <p class="cmp-provider-name">${cmpEscape(name)}</p>
+      ${sub ? `<p class="cmp-provider-sub">${cmpEscape(sub)}</p>` : ''}
+      ${website ? `<a class="cmp-provider-link" href="${cmpEscape(website)}" target="_blank" rel="noreferrer">Visit site ↗</a>` : ''}
+    </div>`;
+  });
+
+  sections.forEach(section => {
+    const isOpen = cmpState.openSections[categoryId][section.id];
+    html += `<div class="cmp-section-label" data-open="${isOpen}" data-section="${section.id}" data-category="${categoryId}">
+      ${cmpEscape(section.label)}
+      <span class="cmp-chevron">▾</span>
+    </div>`;
+    rows.forEach(() => { html += `<div class="cmp-section-filler"></div>`; });
+
+    if (isOpen) {
+      section.fields.forEach(field => {
+        html += `<div class="cmp-row-label">${cmpEscape(field)}</div>`;
+        rows.forEach(r => {
+          html += `<div class="cmp-data">${cmpCellHtml(r[field])}</div>`;
+        });
+      });
+    }
+  });
+
+  html += `</div>`;
+  contentEl.innerHTML = html;
+
+  contentEl.querySelectorAll('.cmp-section-label').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.section;
+      const cat = el.dataset.category;
+      cmpState.openSections[cat][id] = !cmpState.openSections[cat][id];
+      cmpRender(cat);
+    });
+  });
+}
+
+function cmpScroll(categoryId, dir) {
+  const el = document.getElementById(`cmp-scroll-${categoryId}`);
+  if (el) el.scrollBy({ left: dir * 320, behavior: 'smooth' });
+}
 
 // ── Navigation ──
 function showPage(page) {
@@ -834,303 +1000,25 @@ function showPage(page) {
   if (navBtn) navBtn.classList.add('active');
   window.scrollTo(0, 0);
 
-  if (page === 'banks' && state.banks.length === 0) fetchBanks();
-  if (page === 'broadband' && state.broadband.length === 0) fetchBroadband();
-  if (page === 'fintechs' && state.fintechs.length === 0) fetchFintechs();
+  if (CMP_CATEGORIES[page] && !cmpState.data[page]) cmpLoad(page);
 }
 
-// ── Helpers ──
-function ghs(val) {
-  if (val === null || val === undefined || val === '') return '<span class="td-muted">—</span>';
-  return `<span class="td-mono">GHS ${parseFloat(val).toFixed(2)}</span>`;
-}
-function val(v, suffix = '') {
-  if (v === null || v === undefined || v === '') return '<span class="td-muted">—</span>';
-  return `${v}${suffix}`;
-}
-function bool(v) {
-  return v ? '<span class="badge badge-green">Yes</span>' : '<span class="badge">No</span>';
-}
-function fmtDate(d) {
-  if (!d) return '<span class="td-muted">—</span>';
-  return `<span class="verified-date">${d}</span>`;
-}
-function providerName(p) {
-  if (!p) return '—';
-  if (Array.isArray(p)) return p.map(x => x.value || x).join(', ');
-  if (typeof p === 'object') return p.value || p.Name || '—';
-  return p;
-}
-function multiVal(v) {
-  if (!v || (Array.isArray(v) && v.length === 0)) return '<span class="td-muted">—</span>';
-  const arr = Array.isArray(v) ? v : [v];
-  return arr.map(x => `<span class="badge">${x.value || x}</span>`).join(' ');
-}
-function latestDate(rows, field) {
-  const dates = rows.map(r => r[field]).filter(Boolean).sort().reverse();
-  return dates[0] || null;
-}
-
-// ── Fetch ──
+// ── Provider count for hero stat ──
 async function fetchProviders() {
   try {
-    const res = await fetch(`${WORKER_URL}/providers`);
-    const data = await res.json();
-    const count = data.count || 0;
-    document.getElementById('stat-providers').textContent = count;
-  } catch(e) {}
-}
-
-async function fetchBanks() {
-  document.getElementById('bank-tbody').innerHTML =
-    `<tr><td colspan="11"><div class="state-box"><div class="spinner"></div><p>Loading accounts…</p></div></td></tr>`;
-  try {
-    const res = await fetch(`${WORKER_URL}/bank-accounts`);
-    const data = await res.json();
-    state.banks = data.results || [];
-    const latest = latestDate(state.banks, 'last_verified');
-    document.getElementById('bank-updated').textContent = latest || 'Not yet verified';
-    renderBanks();
-  } catch(e) {
-    document.getElementById('bank-tbody').innerHTML =
-      `<tr><td colspan="11"><div class="state-box"><div class="state-box-icon">⚠️</div><p>Could not load data. Try refreshing.</p></div></td></tr>`;
+    const [banksRes, broadbandRes, fintechsRes] = await Promise.all([
+      fetch(`${WORKER_URL}/banks`),
+      fetch(`${WORKER_URL}/broadband`),
+      fetch(`${WORKER_URL}/fintechs`),
+    ]);
+    const [banks, broadband, fintechs] = await Promise.all([
+      banksRes.json(), broadbandRes.json(), fintechsRes.json(),
+    ]);
+    const count = (banks.data || []).length + (broadband.data || []).length + (fintechs.data || []).length;
+    document.getElementById('stat-providers').textContent = count || '—';
+  } catch (e) {
+    document.getElementById('stat-providers').textContent = '—';
   }
-}
-
-async function fetchBroadband() {
-  document.getElementById('broadband-tbody').innerHTML =
-    `<tr><td colspan="12"><div class="state-box"><div class="spinner"></div><p>Loading plans…</p></div></td></tr>`;
-  try {
-    const res = await fetch(`${WORKER_URL}/broadband`);
-    const data = await res.json();
-    state.broadband = data.results || [];
-    const latest = latestDate(state.broadband, 'last_verified');
-    document.getElementById('broadband-updated').textContent = latest || 'Not yet verified';
-    renderBroadband();
-  } catch(e) {
-    document.getElementById('broadband-tbody').innerHTML =
-      `<tr><td colspan="12"><div class="state-box"><div class="state-box-icon">⚠️</div><p>Could not load data. Try refreshing.</p></div></td></tr>`;
-  }
-}
-
-async function fetchFintechs() {
-  document.getElementById('fintech-grid').innerHTML =
-    `<div class="state-box" style="grid-column:1/-1"><div class="spinner"></div><p>Loading fintechs…</p></div>`;
-  try {
-    const res = await fetch(`${WORKER_URL}/fintechs`);
-    const data = await res.json();
-    state.fintechs = data.results || [];
-    renderFintechs();
-  } catch(e) {
-    document.getElementById('fintech-grid').innerHTML =
-      `<div class="state-box" style="grid-column:1/-1"><div class="state-box-icon">⚠️</div><p>Could not load data. Try refreshing.</p></div>`;
-  }
-}
-
-// ── Filter & Sort: Banks ──
-let bankActiveFilter = 'all';
-function filterBanks(type, btn) {
-  bankActiveFilter = type;
-  document.querySelectorAll('#page-banks .filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderBanks();
-}
-function sortBanks(field) {
-  if (state.bankSort.field === field) {
-    state.bankSort.dir = state.bankSort.dir === 'asc' ? 'desc' : 'asc';
-  } else {
-    state.bankSort = { field, dir: 'asc' };
-  }
-  renderBanks();
-}
-function renderBanks() {
-  const q = (document.getElementById('bank-search')?.value || '').toLowerCase();
-  let rows = state.banks.filter(r => {
-    const name = (providerName(r.provider) + ' ' + (r.account_name || '')).toLowerCase();
-    const typeMatch = bankActiveFilter === 'all' || (r.account_type?.value || r.account_type) === bankActiveFilter;
-    return name.includes(q) && typeMatch;
-  });
-
-  if (state.bankSort.field) {
-    rows.sort((a, b) => {
-      const av = parseFloat(a[state.bankSort.field]) || 0;
-      const bv = parseFloat(b[state.bankSort.field]) || 0;
-      return state.bankSort.dir === 'asc' ? av - bv : bv - av;
-    });
-  }
-
-  document.getElementById('bank-count').textContent = rows.length;
-
-  if (rows.length === 0) {
-    document.getElementById('bank-tbody').innerHTML =
-      `<tr><td colspan="11"><div class="state-box"><div class="state-box-icon">🔍</div><p>No accounts match your filters.</p></div></td></tr>`;
-    return;
-  }
-
-  document.getElementById('bank-tbody').innerHTML = rows.map(r => {
-    const provider = providerName(r.provider);
-    const acctType = r.account_type?.value || r.account_type || '—';
-    const mobileFeeType = r.mobile_banking_fee_type?.value || r.mobile_banking_fee_type;
-    const mobileFee = mobileFeeType === 'Free'
-      ? '<span class="badge badge-green">Free</span>'
-      : mobileFeeType ? `<span class="badge">${mobileFeeType}</span>` : '<span class="td-muted">—</span>';
-
-    return `<tr>
-      <td class="td-provider">${provider}</td>
-      <td>${r.account_name || '<span class="td-muted">—</span>'}</td>
-      <td><span class="badge">${acctType}</span></td>
-      <td>${ghs(r.monthly_fee_ghs)}</td>
-      <td>${ghs(r.minimum_balance_ghs)}</td>
-      <td>${ghs(r.atm_fee_own_ghs)}</td>
-      <td>${ghs(r.atm_fee_other_ghs)}</td>
-      <td>${mobileFee}</td>
-      <td>${r.savings_interest_rate_pa ? `<span class="td-mono">${r.savings_interest_rate_pa}% p.a.</span>` : '<span class="td-muted">—</span>'}</td>
-      <td>${fmtDate(r.last_verified)}</td>
-      <td>${r.source_url ? `<a href="${r.source_url}" target="_blank"><button class="btn-cta">View →</button></a>` : ''}</td>
-    </tr>`;
-  }).join('');
-}
-
-// ── Filter & Sort: Broadband ──
-let broadbandActiveFilter = 'all';
-function filterBroadband(type, btn) {
-  broadbandActiveFilter = type;
-  document.querySelectorAll('#page-broadband .filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderBroadband();
-}
-function sortBroadband(field) {
-  if (state.broadbandSort.field === field) {
-    state.broadbandSort.dir = state.broadbandSort.dir === 'asc' ? 'desc' : 'asc';
-  } else {
-    state.broadbandSort = { field, dir: 'asc' };
-  }
-  renderBroadband();
-}
-function renderBroadband() {
-  const q = (document.getElementById('broadband-search')?.value || '').toLowerCase();
-  let rows = state.broadband.filter(r => {
-    const name = (providerName(r.provider) + ' ' + (r.plan_name || '')).toLowerCase();
-    const tech = r.technology?.value || r.technology || '';
-    const typeMatch = broadbandActiveFilter === 'all' || tech === broadbandActiveFilter;
-    return name.includes(q) && typeMatch;
-  });
-
-  if (state.broadbandSort.field) {
-    rows.sort((a, b) => {
-      const av = parseFloat(a[state.broadbandSort.field]) || 0;
-      const bv = parseFloat(b[state.broadbandSort.field]) || 0;
-      return state.broadbandSort.dir === 'asc' ? av - bv : bv - av;
-    });
-  }
-
-  document.getElementById('broadband-count').textContent = rows.length;
-
-  if (rows.length === 0) {
-    document.getElementById('broadband-tbody').innerHTML =
-      `<tr><td colspan="12"><div class="state-box"><div class="state-box-icon">🔍</div><p>No plans match your filters.</p></div></td></tr>`;
-    return;
-  }
-
-  document.getElementById('broadband-tbody').innerHTML = rows.map(r => {
-    const provider = providerName(r.provider);
-    const tech = r.technology?.value || r.technology || '—';
-    const dataLabel = r.unlimited
-      ? '<span class="badge badge-green">Unlimited</span>'
-      : r.data_cap_gb ? `<span class="td-mono">${r.data_cap_gb} GB</span>` : '<span class="td-muted">—</span>';
-    const contract = r.contract_months === 0 || r.contract_months === '0'
-      ? '<span class="badge badge-green">No contract</span>'
-      : r.contract_months ? `<span class="badge">${r.contract_months}mo</span>` : '<span class="td-muted">—</span>';
-    const coverage = r.coverage_areas && r.coverage_areas.length > 0
-      ? r.coverage_areas.slice(0, 2).map(x => `<span class="badge">${x.value || x}</span>`).join(' ')
-      : '<span class="td-muted">—</span>';
-
-    return `<tr>
-      <td class="td-provider">${provider}</td>
-      <td>${r.plan_name || '<span class="td-muted">—</span>'}</td>
-      <td><span class="badge">${tech}</span></td>
-      <td>${r.download_speed_mbps ? `<span class="td-mono">${r.download_speed_mbps} Mbps</span>` : '<span class="td-muted">—</span>'}</td>
-      <td>${r.upload_speed_mbps ? `<span class="td-mono">${r.upload_speed_mbps} Mbps</span>` : '<span class="td-muted">—</span>'}</td>
-      <td>${ghs(r.monthly_price_ghs)}</td>
-      <td>${dataLabel}</td>
-      <td>${contract}</td>
-      <td>${ghs(r.installation_fee_ghs)}</td>
-      <td>${coverage}</td>
-      <td>${fmtDate(r.last_verified)}</td>
-      <td>${r.source_url ? `<a href="${r.source_url}" target="_blank"><button class="btn-cta">View →</button></a>` : ''}</td>
-    </tr>`;
-  }).join('');
-}
-
-// ── Filter: Fintechs ──
-let fintechActiveFilter = 'all';
-function filterFintechs(type, btn) {
-  fintechActiveFilter = type;
-  document.querySelectorAll('#page-fintechs .filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderFintechs();
-}
-function renderFintechs() {
-  const q = (document.getElementById('fintech-search')?.value || '').toLowerCase();
-  let rows = state.fintechs.filter(r => {
-    const name = (r.company_name || providerName(r.provider) || '').toLowerCase();
-    const cats = (r.fintech_category || []).map(x => x.value || x);
-    const catMatch = fintechActiveFilter === 'all' || cats.includes(fintechActiveFilter);
-    return name.includes(q) && catMatch;
-  });
-
-  document.getElementById('fintech-count').textContent = rows.length;
-
-  if (rows.length === 0) {
-    document.getElementById('fintech-grid').innerHTML =
-      `<div class="state-box" style="grid-column:1/-1"><div class="state-box-icon">🔍</div><p>No fintechs match your filters.</p></div>`;
-    return;
-  }
-
-  document.getElementById('fintech-grid').innerHTML = rows.map(r => {
-    const name = r.company_name || providerName(r.provider) || 'Unknown';
-    const cats = (r.fintech_category || []).map(x => `<span class="badge badge-green">${x.value || x}</span>`).join(' ');
-    const channels = (r.primary_channel || []).map(x => `<span class="badge">${x.value || x}</span>`).join(' ');
-    const stage = r.funding_stage?.value || r.funding_stage || '';
-    const regulated = r.regulated;
-    const regulator = (r.regulator || []).map(x => x.value || x).join(', ');
-    const website = r.source_url || '';
-    const cta = r.lead_gen_cta || 'Learn More';
-
-    return `<div class="fintech-card">
-      <div class="fintech-card-header">
-        <div>
-          <div class="fintech-name">${name}</div>
-          ${stage ? `<div class="fintech-stage">${stage}</div>` : ''}
-        </div>
-        ${regulated ? '<span class="badge badge-green">Regulated</span>' : ''}
-      </div>
-      ${r.tagline ? `<p class="fintech-tagline">${r.tagline}</p>` : ''}
-      ${cats ? `<div class="fintech-tags">${cats}</div>` : ''}
-      <div class="fintech-meta">
-        <div class="fintech-meta-item">
-          <span>Channels</span>
-          <span>${channels || '—'}</span>
-        </div>
-        <div class="fintech-meta-item">
-          <span>Regulator</span>
-          <span>${regulator || '—'}</span>
-        </div>
-        ${r.interest_rate ? `<div class="fintech-meta-item">
-          <span>Interest Rate</span>
-          <span>${r.interest_rate}% ${r.interest_rate_period?.value || 'p.m.'}</span>
-        </div>` : ''}
-        ${r.disbursement_time ? `<div class="fintech-meta-item">
-          <span>Disbursement</span>
-          <span>${r.disbursement_time?.value || r.disbursement_time}</span>
-        </div>` : ''}
-      </div>
-      <div class="fintech-card-footer">
-        ${website ? `<a href="${website}" target="_blank"><button class="btn-cta">${cta} →</button></a>` : ''}
-        <button class="btn-outline" onclick="alert('Suggest a correction feature coming soon.')">Flag issue</button>
-      </div>
-    </div>`;
-  }).join('');
 }
 
 // ── Init ──
